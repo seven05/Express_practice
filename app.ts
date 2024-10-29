@@ -1,10 +1,13 @@
 import express, { Request, Response } from 'express';
+import { connect_db } from './schemas'; 
 
 const app = express();
 const port = 3000;
 
+connect_db();
+
 app.get('/', (req: Request, res: Response) => {
-  res.send('Hello World!');
+  res.send('TypeScript, Node.js, Express, mongodb connect');
 });
 
 app.listen(port, () => {
