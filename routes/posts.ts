@@ -16,11 +16,11 @@ router.get('/', async (req: Request, res: Response) => {
 
 // 게시글 작성
 router.post('/', authMiddleware, async (req: Request, res: Response): Promise<void> => {
-	const { title, content, password } = req.body;
+	const { title, content/* , password */ } = req.body;
 	const user = (req as any).user;
 
 	try {
-		const newPost = new Post({ title, author: user.nickname, content, password });
+		const newPost = new Post({ title, author: user.nickname, content/* , password */ });
 		await newPost.save();
 		res.status(201).json(newPost);
 	} catch (error) {
@@ -43,17 +43,18 @@ router.get('/:id', async (req: Request, res: Response): Promise<void> => {
 
 
 // 게시글 수정
-router.put('/:id', async (req: Request, res: Response): Promise<void> => {
+router.put('/:id', authMiddleware, async (req: Request, res: Response): Promise<void> => {
+	const { title, content } = req.body;
+	const user = (req as any).user;
 	try {
-		const { password, title, content } = req.body;
 		const post = await Post.findById(req.params.id);
 		if (!post) {
 			res.status(404).json({ error: '게시글을 찾을 수 없습니다.' });
 			return;
 		}
 
-		if (post.password !== password) {
-			res.status(403).json({ error: '비밀번호가 일치하지 않습니다.' });
+		if (post.author !== user.nickname) {
+			res.status(403).json({ error: '수정 권한이 없습니다.' });
 			return;
 		}
 
@@ -68,8 +69,8 @@ router.put('/:id', async (req: Request, res: Response): Promise<void> => {
 
 
 // 게시글 삭제
-router.delete('/:id', async (req: Request, res: Response): Promise<void> => {
-	const { password } = req.body;
+router.delete('/:id', authMiddleware, async (req: Request, res: Response): Promise<void> => {
+	const user = (req as any).user;
 	try {
 		const post = await Post.findById(req.params.id);
 		if (!post) {
@@ -77,12 +78,12 @@ router.delete('/:id', async (req: Request, res: Response): Promise<void> => {
 			return;
 		}
 
-		if (post.password !== password) {
-			res.status(403).json({ error: '비밀번호가 일치하지 않습니다.' });
+		if (post.author !== user.nickname) {
+			res.status(403).json({ error: '삭제 권한이 없습니다.' });
 			return;
 		}
 
-		await Post.findByIdAndDelete(req.params.id);
+		await post.deleteOne();
 
 		await Comment.deleteMany({ postId: req.params.id });
 		res.json({ message: '게시글이 삭제되었습니다.' });
