@@ -70,4 +70,10 @@ router.post('/login', async (req: Request, res: Response): Promise<void> => {
 	}
 });
 
+// 로그아웃
+router.post('/logout', (req: Request, res: Response): void => {
+	res.clearCookie('authorization', { httpOnly: true, secure: true, sameSite: 'strict' });
+	res.status(200).json({ message: '로그아웃되었습니다.' });
+});
+
 export default router;
