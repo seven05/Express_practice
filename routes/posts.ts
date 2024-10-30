@@ -1,5 +1,6 @@
 import express,{ Request, Response } from 'express';
 import Post from '../schemas/posts';
+import Comment from '../schemas/comments';
 const router = express.Router();
 
 // 전체 게시글 목록 조회
@@ -80,6 +81,8 @@ router.delete('/:id', async (req: Request, res: Response): Promise<void> => {
       }
       
       await Post.findByIdAndDelete(req.params.id);
+
+      await Comment.deleteMany({ postId: req.params.id });
       res.json({ message: '게시글이 삭제되었습니다.' });
     } catch (error) {
       res.status(500).json({ error: '게시글 삭제 실패' });
