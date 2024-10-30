@@ -8,7 +8,7 @@ dotenv.config({ path: path.resolve(__dirname, '../.env') });
 const router = express.Router();
 
 // 회원 가입
-router.post('/signup', async (req: Request, res: Response): Promise<void> => {
+router.post('/signup', async (req: Request, res: Response) => {
 	const { nickname, password, confirmPassword } = req.body;
 
 	try {
@@ -48,7 +48,7 @@ router.post('/signup', async (req: Request, res: Response): Promise<void> => {
 });
 
 // 로그인
-router.post('/login', async (req: Request, res: Response): Promise<void> => {
+router.post('/login', async (req: Request, res: Response) => {
 	const { nickname, password } = req.body;
 
 	try {

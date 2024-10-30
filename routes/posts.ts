@@ -15,7 +15,7 @@ router.get('/', async (req: Request, res: Response) => {
 });
 
 // 게시글 작성
-router.post('/', authMiddleware, async (req: Request, res: Response): Promise<void> => {
+router.post('/', authMiddleware, async (req: Request, res: Response) => {
 	const { title, content/* , password */ } = req.body;
 	const user = (req as any).user;
 
@@ -28,7 +28,7 @@ router.post('/', authMiddleware, async (req: Request, res: Response): Promise<vo
 	}
 });
 // 게시글 조회
-router.get('/:id', async (req: Request, res: Response): Promise<void> => {
+router.get('/:id', async (req: Request, res: Response) => {
 	try {
 		const post = await Post.findById(req.params.id);
 		if (!post) {
@@ -43,7 +43,7 @@ router.get('/:id', async (req: Request, res: Response): Promise<void> => {
 
 
 // 게시글 수정
-router.put('/:id', authMiddleware, async (req: Request, res: Response): Promise<void> => {
+router.put('/:id', authMiddleware, async (req: Request<{id:string},{},{title:string, content:string}>, res: Response) => {
 	const { title, content } = req.body;
 	const user = (req as any).user;
 	try {
@@ -69,7 +69,7 @@ router.put('/:id', authMiddleware, async (req: Request, res: Response): Promise<
 
 
 // 게시글 삭제
-router.delete('/:id', authMiddleware, async (req: Request, res: Response): Promise<void> => {
+router.delete('/:id', authMiddleware, async (req: Request, res: Response) => {
 	const user = (req as any).user;
 	try {
 		const post = await Post.findById(req.params.id);

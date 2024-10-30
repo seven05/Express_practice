@@ -14,7 +14,7 @@ router.get('/:postId', async (req: Request, res: Response) => {
 });
 
 // 댓글 작성
-router.post('/:postId', authMiddleware, async (req: Request, res: Response): Promise<void> => {
+router.post('/:postId', authMiddleware, async (req: Request, res: Response) => {
 	const { content } = req.body;
 	const user = (req as any).user;
 	if (!content) {
@@ -32,7 +32,7 @@ router.post('/:postId', authMiddleware, async (req: Request, res: Response): Pro
 });
 
 // 댓글 수정
-router.put('/:commentId', authMiddleware, async (req: Request, res: Response): Promise<void> => {
+router.put('/:commentId', authMiddleware, async (req: Request, res: Response) => {
 	const { content } = req.body;
 	const user = (req as any).user;
 	if (!content) {
@@ -60,7 +60,7 @@ router.put('/:commentId', authMiddleware, async (req: Request, res: Response): P
 });
 
 // 댓글 삭제
-router.delete('/:commentId', authMiddleware, async (req: Request, res: Response): Promise<void> => {
+router.delete('/:commentId', authMiddleware, async (req: Request, res: Response) => {
 	const user = (req as any).user;
 	try {
 		const comment = await Comment.findById(req.params.commentId);
