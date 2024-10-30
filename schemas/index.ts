@@ -1,12 +1,9 @@
 import mongoose from 'mongoose';
-import fs from 'fs';
+import dotenv from 'dotenv';
 import path from 'path';
 
-// JSON 파일 경로 설정
-const userInfoPath = path.join(__dirname, '../config/userinfo.json');
-// JSON 파일에서 db_password 가져오기
-const userInfo = JSON.parse(fs.readFileSync(userInfoPath, 'utf-8'));
-const db_password = userInfo.db_password;
+dotenv.config({ path: path.resolve(__dirname, '../.env') });
+const db_password = process.env.DB_PASSWORD;
 
 const db_uri = `mongodb+srv://sparta:${db_password}@cluster0.esmjwdb.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0`;
 

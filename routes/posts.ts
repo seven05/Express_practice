@@ -1,6 +1,7 @@
 import express, { Request, Response } from 'express';
 import Post from '../schemas/posts';
 import Comment from '../schemas/comments';
+import { authMiddleware } from '../auth';
 const router = express.Router();
 
 // 전체 게시글 목록 조회
@@ -14,17 +15,18 @@ router.get('/', async (req: Request, res: Response) => {
 });
 
 // 게시글 작성
-router.post('/', async (req: Request, res: Response) => {
-	const { title, author, content, password } = req.body;
+router.post('/', authMiddleware, async (req: Request, res: Response): Promise<void> => {
+	const { title, content, password } = req.body;
+	const user = (req as any).user;
+
 	try {
-		const newPost = new Post({ title, author, content, password });
+		const newPost = new Post({ title, author: user.nickname, content, password });
 		await newPost.save();
 		res.status(201).json(newPost);
 	} catch (error) {
 		res.status(500).json({ error: '게시글 작성 실패' });
 	}
 });
-
 // 게시글 조회
 router.get('/:id', async (req: Request, res: Response): Promise<void> => {
 	try {
