@@ -1,5 +1,7 @@
 import express, { Request, Response } from 'express';
-import User from '../schemas/users';
+// import User from '../schemas/users';
+import { AppDataSource } from '../ormconfig';
+import { User } from '../entities/User';
 import jwt from 'jsonwebtoken';
 import dotenv from 'dotenv';
 import path from 'path';
@@ -18,7 +20,8 @@ router.post('/signup', async (req: Request, res: Response) => {
 			return;
 		}
 
-		const existingUser = await User.findOne({ nickname });
+		// const existingUser = await User.findOne({ nickname });
+		const existingUser = await AppDataSource.getRepository(User).findOne({ where: { nickname } });
 		if (existingUser) {
 			res.status(400).json({ error: '중복된 닉네임입니다.' });
 			return;
@@ -38,8 +41,10 @@ router.post('/signup', async (req: Request, res: Response) => {
 			return;
 		}
 
-		const newUser = new User({ nickname, password });
-		await newUser.save();
+		// const newUser = new User({ nickname, password });
+		// await newUser.save();
+		const newUser = AppDataSource.getRepository(User).create({ nickname, password });
+		await AppDataSource.getRepository(User).save(newUser);
 		res.status(201).json({ message: '회원 가입에 성공했습니다.' });
 
 	} catch (error) {
@@ -52,7 +57,8 @@ router.post('/login', async (req: Request, res: Response) => {
 	const { nickname, password } = req.body;
 
 	try {
-		const user = await User.findOne({ nickname });
+		// const user = await User.findOne({ nickname });
+		const user = await AppDataSource.getRepository(User).findOne({ where: { nickname } });
 		if (!user || user.password !== password) {
 			res.status(400).json({ error: '닉네임 또는 패스워드를 확인해주세요.' });
 			return;
@@ -61,8 +67,8 @@ router.post('/login', async (req: Request, res: Response) => {
 		if (!secretKey) {
 			throw new Error('환경 변수에서 JWT_SECRET_KEY를 찾을 수 없습니다.');
 		}
-		const token = jwt.sign({ userId: user._id, nickname: user.nickname }, secretKey, { expiresIn: '1h' });
-
+		// const token = jwt.sign({ userId: user._id, nickname: user.nickname }, secretKey, { expiresIn: '1h' });
+		const token = jwt.sign({ userId: user.id, nickname: user.nickname }, secretKey, { expiresIn: '1h' });
 		res.cookie('authorization', `Bearer ${token}`, { httpOnly: true });
 		res.status(200).json({ message: '로그인 성공' });
 	} catch (error) {

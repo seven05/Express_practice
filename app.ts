@@ -1,5 +1,6 @@
 import express, { Request, Response } from 'express';
-import { connect_db } from './schemas';
+// import { connect_db } from './schemas';
+import { AppDataSource } from './ormconfig';
 import routes from "./routes"
 import cookieParser from 'cookie-parser';
 import swaggerUi from 'swagger-ui-express';
@@ -8,7 +9,15 @@ import swaggerDocument from './swagger-output.json';
 const app = express();
 const port = 3000;
 
-connect_db();
+// connect_db();
+// 데이터베이스 연결
+AppDataSource.initialize()
+  .then(() => {
+    console.log('Database connection established successfully.');
+  })
+  .catch((error) => {
+    console.error('Database connection error:', error);
+  });
 
 app.use(express.json());
 app.use(cookieParser());

@@ -7,7 +7,8 @@ import path from 'path';
 dotenv.config({ path: path.resolve(__dirname, '../.env') });
 
 export const authMiddleware = (req: Request, res: Response, next: NextFunction):void => {
-	const token = req.cookies?.authorization?.split(' ')[1];
+	const token = req.headers.authorization?.split(' ')[1];
+	// console.log(token)
 	if (!token) {
 		res.status(401).json({ error: '로그인이 필요합니다.' });
 		return ;
