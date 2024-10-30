@@ -4,7 +4,7 @@ export interface IPost extends Document {
 	title: string;
 	author: string;
 	content: string;
-	password: string;
+	// password: string;
 	createdAt: Date;
 }
 
