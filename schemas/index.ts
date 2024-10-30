@@ -12,13 +12,13 @@ const db_uri = `mongodb+srv://sparta:${db_password}@cluster0.esmjwdb.mongodb.net
 
 // MongoDB 연결 함수
 const connect_db = (): void => {
-  mongoose.connect(db_uri)
-    .then(() => {
-      console.log('MongoDB 연결 성공');
-    })
-    .catch((err: Error) => {
-      console.log(err);
-    });
+	mongoose.connect(db_uri)
+		.then(() => {
+			console.log('MongoDB 연결 성공');
+		})
+		.catch((err: Error) => {
+			console.log(err);
+		});
 };
 
 export { connect_db };
